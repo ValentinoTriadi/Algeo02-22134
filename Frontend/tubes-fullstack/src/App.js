@@ -7,23 +7,26 @@ import React, { useState } from "react";
 function App() {
   
   const [selectedFile, setSelectedFile] = useState(null);
+  const [namaFile, setNamaFile] = useState(null);
 
   const filechangehandler = (e) => {
     setSelectedFile(e.target.files[0]);
+    setNamaFile(e.target.files[0].name);
     console.log(e.target.files[0]);
   }
-
+  
   const handlesubmit = (e) => {
+    console.log(namaFile);
     const formData = new FormData();
     formData.append(
       "file",
       selectedFile,
       selectedFile.name
     );
-    // formData.append(
-    //   "namafile",
-    //   selectedFile.target.files[0].name,
-    // )
+    formData.append(
+      "namafile",
+      namaFile,
+    )
 
     const requestOptions = {
       method: "POST",

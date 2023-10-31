@@ -17,13 +17,6 @@ app.add_middleware(
 )
 
 dir_path = 'Backend\dataset'
-def countFile():
-    count = 0
-    for path in os.listdir(dir_path):
-        if os.path.isfile(os.path.join(dir_path, path)):
-            count += 1
-    return count
-
 namaFile = []
 
 
@@ -36,17 +29,15 @@ async def bro():
     return "hALO"
 
 @app.post("/upload/")
-# async def receiveFile(file: bytes = File(...), namafile: str = Form(...)):
-async def receiveFile(file: bytes = File(...)):
+async def receiveFile(file: bytes = File(...), namafile: str = Form(...)):
+# async def receiveFile(file: bytes = File(...)):
 
-    # print(namafile)
+    print(namafile)
+    namaFile.append(namafile)
     image = Image.open(io.BytesIO(file))
-    if (os.path.exists("Backend\dataset")):
-        print("TRUE")
-    else:
-        print("FALSE")
-        os.mkdir("Backend\dataset")
-    i = countFile()
-    image = image.save(f"Backend\dataset\img{i}.jpg")
+    if (not os.path.exists(dir_path)):
+        os.mkdir(dir_path)
+    if (not os.path.exists(f"{dir_path}\{namafile}")):
+        image = image.save(f"{dir_path}\{namafile}")
 
     return {"uploadStatus": "Complete"}
