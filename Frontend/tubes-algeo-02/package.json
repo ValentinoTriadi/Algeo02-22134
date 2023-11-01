@@ -18,6 +18,10 @@
     "next": "14.0.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-html5-camera-photo": "^1.5.11",
+    "react-preloaders": "^3.0.3",
+    "react-spinners": "^0.13.8",
+    "react-webcam": "^7.2.0",
     "shadcn-ui": "^0.4.1",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7"

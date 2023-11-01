@@ -182,4 +182,3 @@ const CBIR: React.FC = () => {
 }
 
 export default CBIR
-
