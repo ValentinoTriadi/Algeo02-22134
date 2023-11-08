@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 import io
 import os
+import Backend.CBIR
 
 app = FastAPI()
 
@@ -30,8 +31,6 @@ async def bro():
 
 @app.post("/upload/")
 async def receiveFile(file: bytes = File(...), namafile: str = Form(...)):
-# async def receiveFile(file: bytes = File(...)):
-
     print(namafile)
     namaFile.append(namafile)
     image = Image.open(io.BytesIO(file))
@@ -39,5 +38,7 @@ async def receiveFile(file: bytes = File(...), namafile: str = Form(...)):
         os.mkdir(dir_path)
     if (not os.path.exists(f"{dir_path}\{namafile}")):
         image = image.save(f"{dir_path}\{namafile}")
+
+    RGBtoHSV(namafile)
 
     return {"uploadStatus": "Complete"}
