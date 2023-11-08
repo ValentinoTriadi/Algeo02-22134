@@ -57,6 +57,77 @@ def RGBtoHSV(filename):
     # print(r,g,b)
     # print(rgb)
     # hsv = convertHSV(r,g,b)
+
+
     
+def decompose_block(filename):
+    img = Image.open(f"Backend/dataset/{filename}")
+    array = np.array(img)
+    new_array = np.array_split(array,3)
+    
+    # Menampilkan setiap blok secara terpisah
+    #for i, block in enumerate(new_array):
+        #image = Image.fromarray(block.astype('uint8'))
+        #image.show()
+
+    
+    new2_array = [np.array_split(part, 3, axis=1) for part in new_array]
+
+    # Menampilkan setiap blok secara terpisah
+    #for i, part in enumerate(new2_array):
+        #for j, block in enumerate(part):
+            #image = Image.fromarray(block.astype('uint8'))
+            #image.show()
+
+def hsv_to_histogram(block):
+    h, s, v = np.split(block, 3, axis=2)                     #Menyimpan masing masing H,S,V ke suatu array.
+    #Mengubah masing masing array menjadi histogram.
+    hist = np.histogram(h, bins=256, range=(0, 255))[0]
+    hist += np.histogram(s, bins=256, range=(0, 255))[0]
+    hist += np.histogram(v, bins=256, range=(0, 255))[0]
+
+    #Mengembalikan hsv 3x3 dalam bentuk histogram
+    return hist
+
+def histogram_block(filename):
+    block = decompose_block(filename)
+    return hsv_to_histogram(block)
+
+def range_histogram(filename):
+    block = decompose_block(filename)
+    histogram = hsv_to_histogram(block)
+
+    h_min = np.min(hist[:, 0])
+    h_max = np.max(hist[:, 0])
+    s_min = np.min(hist[:, 1])
+    s_max = np.max(hist[:, 1])
+    v_min = np.min(hist[:, 2])
+    v_max = np.max(hist[:, 2])
+
+    h_range = h_max - h_min
+    s_range = s_max - s_min
+    v_range = v_max - v_min
+
+    return h_range, s_range, v_range
+
+def cosine_similarity(a, b):
+    return np.dot(a, b) / np.linalg.norm(a) * np.linalg.norm(b)
+
+def compare_blocks(filename_a, filename_b):
+    ranges_a = []
+    ranges_b = []
+    for i in range(9):
+        ranges_a.append(range_histogram(filename_a))
+        ranges_b.append(range_histogram(filename_b))
+
+    similarity = 0
+    for i in range(9):
+        for j in range(9):
+            similarity += cosine_similarity(ranges_a[i], ranges_b[j])
+
+    return similarity / (9 * 9)
+
+
+
 
 
