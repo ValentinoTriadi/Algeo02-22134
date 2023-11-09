@@ -73,4 +73,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  .font-gradient {
+    background: #5981E8;
+    background: linear-gradient(to right, #7788F9 0%, #FCCDF8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
