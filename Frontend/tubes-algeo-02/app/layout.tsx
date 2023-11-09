@@ -5,6 +5,9 @@ import './globals.css'
 import '@fontsource/poppins'
 import Navbar from './(routes)/Navbar/Navbar'
 import Footer from './(routes)/Footer/Footer'
+import AOS from 'aos';
+import 'aos/dist/aos.css'
+import { useEffect } from 'react'
 
 const myStyle = {
   fontFamily: 'Poppins, sans-serif',
@@ -16,6 +19,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  useEffect(() => {
+    AOS.init({
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 50,
+      delay: 50,
+    });
+  });
+
   return (
     <html lang="en">
       <title>Go Milk</title>

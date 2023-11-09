@@ -8,7 +8,7 @@ const page = () => {
   return (
     <section className='w-full h-full p-12 flex flex-col items-center justify-center text-center'>
       <Image src={WebBG} alt="Background Website" className="h-full w-full fixed top-0 left-0 z-[-100] text-[#2F3238]"/>
-      <div className='mt-[75px]' />
+      <div className='mt-[125px]' />
 
       <h1 className='font-bold text-4xl'>About This Tugas Besar</h1>
       <p className='mt-8 w-[800px]'>

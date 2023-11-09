@@ -65,6 +65,8 @@ const page = () => {
         />
         </div>
       </div>
+
+      {/* RESULT */}
     </section>
   )
 }
