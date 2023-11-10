@@ -8,7 +8,6 @@ def imageToArray(filename):
     print(array.shape[1])
     return array
 
-
 def convertHSV(r,g,b):
     r,g,b = r/255, g/255, b/255
     Cmax = max(r,g,b)
@@ -128,6 +127,125 @@ def compare_blocks(filename_a, filename_b):
     return similarity / (9 * 9)
 
 
+#Konsep CBIR dengan parameter tekstur
+#1. ubah jadi greyscale pakai rumus Y
+#2. diquantifikasi dengan quantisasi level 256
+#3. dibuat jadi GCLM/co-occurance(ada referensinya dalam bentuk medium)
+    -step 1 buat framework matrix
+    -step 2 symmetic matrix
+    -dinormalisasi
+    -jadi glcm_matrix
+#4. cari nilai contrast, entropy dan homogeneity dibuat jadi vektor
+#5. bandingin
+#6. pictureToTextureVector ada fungsi ini buat kalo baca langsung dapet vektor tekstur
+
+def convertToGrayscale(imageArray):
+    rgb = np.array(imageArray);
+    newShape = (rgb.shape[0],rgb.shape[1])
+    new = np.zeros(newShape,dtype='float')
+    new[...]=rgb[...0]+rgb[...1]+rgb[..2]
+    return new
+
+
+def normalize_brightness(grayscale_matrix):
+    min_val = np.min(grayscale_matrix)
+    max_val = np.max(grayscale_matrix)
+    
+    # Normalisasi kecerahan ke rentang 0-255
+    normalized_matrix = 255 * (grayscale_matrix - min_val) / (max_val - min_val)
+    
+    return normalized_matrix
+
+def quantization(grayscale_matrix):
+    num_levels= 256
+    # Menentukan rentang tingkat keabuan
+    quantization_range = np.linspace(0, 255, num_levels)
+    
+    # Menetapkan nilai tengah rentang tingkat keabuan yang sesuai
+    quantized_matrix = np.digitize(grayscale_matrix, quantization_range) - 1
+    
+    return quantized_matrix
+
+def create_framework_matrix(quantization_level):
+    # Menentukan dimensi matriks
+    dimensions = (quantization_level, quantization_level)
+
+    # Menentukan tingkat keabuan untuk setiap elemen matriks
+    quantization_step = quantization_level // np.prod(dimensions)
+
+    # Membuat framework matrix menggunakan broadcasting NumPy
+    row_indices, col_indices = np.indices(dimensions)
+    framework_matrix = row_indices * dimensions[1] * quantization_step + col_indices * quantization_step
+
+    return framework_matrix
+
+def create_co_occurrence_matrix(input_matrix, quantization_level):
+    # Membuat framework matrix
+    framework_matrix = np.arange(quantization_level * quantization_level).reshape((quantization_level, quantization_level))
+
+    # Mengambil pasangan pixel secara horizontal
+    horizontal_pairs = input_matrix[:, :-1] * quantization_level + input_matrix[:, 1:]
+
+    # Membagi matriks horizontal_pairs menjadi 256 matriks berukuran 1x2
+    horizontal_pairs_split = np.array_split(horizontal_pairs, quantization_level)
+
+    # Menghitung frekuensi kemunculan pasangan pixel
+    unique_pairs, counts = np.unique(horizontal_pairs_split, axis=1, return_counts=True)
+
+    # Mencari koordinat pasangan pixel pada framework matrix
+    row_indices = unique_pairs // quantization_level
+    col_indices = unique_pairs % quantization_level
+
+    # Inisialisasi GLCM matrix dengan zeros
+    glcm_matrix = np.zeros((quantization_level, quantization_level))
+
+    # Menambahkan frekuensi ke GLCM matrix
+    glcm_matrix[row_indices, col_indices] = counts
+
+    # Membuat matriks simetris
+    glcm_matrix = glcm_matrix + glcm_matrix.T
+
+    return glcm_matrix
+
+
+
+def calculate_contrast_from_glcm(glcm_matrix):
+    return np.sum(glcm_matrix * (glcm_matrix - np.mean(glcm_matrix))**2)
+
+def calculate_homogeneity_from_glcm(glcm_matrix):
+    return np.sum(glcm_matrix / (1 + (glcm_matrix - np.mean(glcm_matrix))**2))
+
+def calculate_entropy_from_glcm(glcm_matrix):
+    epsilon = 1e-15  # untuk menghindari log(0)
+    return -np.sum(glcm_matrix * np.log(glcm_matrix + epsilon))
+
+
+def create_texture_vector(glcm_matrix):
+    contrast = calculate_contrast(glcm_matrix)
+    homogeneity = calculate_homogeneity(glcm_matrix)
+    entropy = calculate_entropy(glcm_matrix)
+    texture_vector = np.array([contrast, homogeneity, entropy])
+    return texture_vector
+
+def pictureToTextureVector(filename):
+    rgb = imageToArray(filename)
+    grayscale_matrix = convertToGrayscale(rgb)
+    quantized_matrix = quantization(grayscale_matrix)
+    glcm_matrix = create_co_occurrence_matrix(quantized_matrix, 256)
+    texture_vector = create_texture_vector(glcm_matrix)
+
+
+    with open("vector.txt", "a") as f:
+        f.write(str(texture_vector) + "\n")
+
+    return texture_vector
+
+def cosine_similarity(vector_a, vector_b):
+    dot_product = np.dot(vector_a, vector_b)
+    magnitude_a = np.linalg.norm(vector_a)
+    magnitude_b = np.linalg.norm(vector_b)
+    similarity = dot_product / (magnitude_a * magnitude_b)
+    return similarity
 
 
 
