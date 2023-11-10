@@ -10,8 +10,9 @@ function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [namaFile, setNamaFile] = useState(null);
   const [formData, setFormData] = useState(new FormData());
+  const [responsess, setResponsess] = useState(null)
   
-
+ 
   const fileschangehandler = (e) => {
     const newformData = new FormData();
     const files = e.target.files;
@@ -29,11 +30,13 @@ function App() {
   }
   
   const handleUpload = () => {
-    axios.post('http://127.0.0.1:8000/uploadfiles', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    axios
+      .post('http://127.0.0.1:8000/uploadfiles', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
     console.log("STARTTTTTTT");
   };
 
@@ -44,6 +47,20 @@ function App() {
     console.log(e.target.files[0]);
   }
   
+  const getSimiliarity = () => {
+    const requestOptions = {
+      method: "GET",
+      headers:{'Content-Type': 'application/json'}
+    }
+
+    fetch("http://127.0.0.1:8000/hasil/", requestOptions)
+    .then(response => response.json())
+    .then(function(response){
+      console.log(response);
+      setResponsess(response);
+    });
+  }
+
   const handlesubmit = (e) => {
     console.log(namaFile);
     const formData = new FormData();
@@ -60,15 +77,18 @@ function App() {
     const requestOptions = {
       method: "POST",
       body: formData,
+      // headers:{'Content-Type': 'application/json'}
     }
 
     fetch("http://127.0.0.1:8000/upload/", requestOptions)
     .then(response => response.json())
     .then(function(response){
       console.log(response);
-    })
+    });
+    
+    getSimiliarity()
   }
-
+  
   return (
     <div className="App">
       <form>
@@ -83,6 +103,7 @@ function App() {
         </fieldset>
         <button onClick={handlesubmit}>Upload</button>
       </form>
+      <p>_________________{responsess}_________________</p>
     </div>
   );
 }

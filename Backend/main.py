@@ -1,11 +1,13 @@
-from fastapi import FastAPI, HTTPException, status, File, Form, UploadFile
-from typing import List
+from fastapi import FastAPI, HTTPException, status, File, Form, UploadFile, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from typing import List
 from PIL import Image
+import json
 import io
-import os
+import os, shutil
 import time
-from Backend.CBIR import range_histogram, compare
+from CBIR import colorSimiliarity, compare
 
 app = FastAPI()
 
@@ -19,14 +21,18 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-dir_path = 'Backend\dataset'
+dir_path = 'static/dataset'
 namaFile = []
 
+app.mount("/static/", StaticFiles(directory="static"), name="static")
 
-
-@app.get("/u/")
+@app.get("/hasil/")
 async def asdfsad():
-    return "blabsss"
+    f = open("hasil.json", 'r', encoding='utf-8')
+    ret = f.read()
+    f.close()
+    print(ret)
+    return (ret)
 @app.get("/")
 async def bro():
     return "hALO"
@@ -36,19 +42,25 @@ async def receiveFile(file: bytes = File(...), namafile: str = Form(...)):
 # async def receiveFile(file: bytes = File(...)):
     start = time.time()
     image = Image.open(io.BytesIO(file))
-    image = image.save(f"Backend/{namafile}")
+    image = image.save(f"static/{namafile}")
 
     if (not os.path.exists(dir_path)):
         return {"Status": "Fail"}
     result = compare(namafile)
-
+    os.remove(f"static/{namafile}")
     end = time.time()
     print("Execution Time:", end-start,'s')
+    # result = json.dumps(result)
+    # print((result))
     return result
 
 @app.post("/uploadfiles/")
 async def upload_files(files: List[UploadFile] = File(...)):
     print("Start")
+    if os.path.isdir("static/dataset"):
+        shutil.rmtree("static/dataset")
+    if os.path.isfile("cache.txt"):
+        os.remove("cache.txt")
     start = time.time()
     count = 0
     if (not os.path.exists(dir_path)):
@@ -60,8 +72,8 @@ async def upload_files(files: List[UploadFile] = File(...)):
         img = Image.open(io.BytesIO(contents))
         # img.show()
         if (not os.path.exists(f"{dir_path}\{file.filename}")):
-            img = img.save(f"{dir_path}\{file.filename}")
-        range_histogram(file.filename, True)
+            img.save(f"{dir_path}\{file.filename}")
+        colorSimiliarity(img, True, file.filename)
 
     end = time.time()
     print("Uploaded", count, "Files in", end-start,'s')
