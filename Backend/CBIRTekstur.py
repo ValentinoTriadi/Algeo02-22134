@@ -22,20 +22,11 @@ def convertToGrayscale(imageArray):
     new[...] = (rgb[...,0] * 0.29) + (rgb[...,1] * 0.587) + (rgb[...,2] * 0.114)
     return new
 
-def quantization(grayscale_matrix, num_levels=256):
-    # metode bilinear interpolation supaya jadi 256x256
-    resized_matrix = np.array(Image.fromarray(grayscale_matrix.astype('int')).resize((256, 256), Image.BILINEAR))
-    quantization_range = np.linspace(0, 255, num_levels)
-    quantized_matrix = np.digitize(resized_matrix, quantization_range) - 1
-    return quantized_matrix
-    # return resized_matrix
-
 def create_co_occurrence_matrix(input_matrix, quantization_level):
     framework_matrix = np.zeros((quantization_level, quantization_level), dtype=int)
     input = input_matrix.astype("int")
     np.add.at(framework_matrix, (input[:, :-1], input[:, 1:]), 1)
     glcm_matrix = np.add(framework_matrix, np.transpose(framework_matrix))
-
     return glcm_matrix
 
 def calculate_contrast_from_glcm(glcm_matrix):
