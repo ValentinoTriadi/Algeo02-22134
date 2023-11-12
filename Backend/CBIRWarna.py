@@ -79,20 +79,7 @@ def cosine_similarity(a, b):
 def compare_blocks(h1, h2):
     sim = 0
     for i in range(9):
-        similarity = []
-        getfull = False
-        for j in range(9):
-            s = cosine_similarity(h1[i], h2[j])
-            
-            if (round(s*100000) == 100000):
-                getfull = True
-                break
-            else:
-                similarity.append(s)    
-        if (getfull):
-            sim += 1
-        else:
-            sim += np.mean(similarity)
+        sim += cosine_similarity(h1[i], h2[i])
 
     return (sim / 9)*100
 
@@ -102,7 +89,7 @@ def parseTXT(Line):
 
     return r
 
-def compare(filename):
+def compareWarna(filename):
     img = Image.open(f"static/{filename}")
     img = colorSimiliarity(img, False, filename)
     ret = {}
@@ -112,10 +99,12 @@ def compare(filename):
         temp = parseTXT(line[i])
         sim = (compare_blocks(img, temp[1]))
         if (sim >= 60):
-            print(i, round(sim,2))
             ret[f"{temp[0]}"] = round(sim, 2)
 
+    ret = {key: val for key, val in sorted(ret.items(), key = lambda ele: ele[1], reverse = True)}
     f = open("hasil.json", 'w', encoding='utf-8')
     f.write(json.dumps(ret))
     f.close
     return ret
+
+

@@ -29,20 +29,6 @@ function App() {
     // });
   }
   
-  const processUpload = () => {
-    const requestOptions = {
-      method: "GET",
-      headers:{'Content-Type': 'application/json'}
-    }
-
-    fetch("http://127.0.0.1:8000/proses-warna/", requestOptions)
-    .then(response => response.json())
-    .then(function(response){
-      console.log(response);
-      setResponsess(response);
-    });
-  }
-
   const handleUpload = () => {
     axios
       .post('http://127.0.0.1:8000/uploadfiles', formData, {
@@ -94,56 +80,14 @@ function App() {
       // headers:{'Content-Type': 'application/json'}
     }
 
-    fetch("http://127.0.0.1:8000/search-warna/", requestOptions)
+    fetch("http://127.0.0.1:8000/upload/", requestOptions)
     .then(response => response.json())
     .then(function(response){
       console.log(response);
     });
     
+    getSimiliarity()
   }
-  
-  const processUpload1 = () => {
-    const requestOptions = {
-      method: "GET",
-      headers:{'Content-Type': 'application/json'}
-    }
-
-    fetch("http://127.0.0.1:8000/proses-tekstur/", requestOptions)
-    .then(response => response.json())
-    .then(function(response){
-      console.log(response);
-      setResponsess(response);
-    });
-  }
-
-  const handlesubmit1 = (e) => {
-    console.log(namaFile);
-    const formData = new FormData();
-    formData.append(
-      "file",
-      selectedFile,
-      selectedFile.name
-    );
-    formData.append(
-      "namafile",
-      namaFile,
-    )
-
-    const requestOptions = {
-      method: "POST",
-      body: formData,
-      // headers:{'Content-Type': 'application/json'}
-    }
-
-    fetch("http://127.0.0.1:8000/search-tekstur/", requestOptions)
-    .then(response => response.json())
-    .then(function(response){
-      console.log(response);
-    });
-    
-  }
-
-  getSimiliarity()
   
   return (
     <div className="App">
@@ -152,27 +96,12 @@ function App() {
           <input onChange={fileschangehandler} multiple name="image" type="file" accept=".jpg, .jpeg"></input>
         </fieldset>
         <button onClick={handleUpload}>Upload</button>
-        <button onClick={processUpload}>Process</button>
       </form>
       <form>
         <fieldset>
           <input onChange={filechangehandler} multiple name="image" type="file" accept=".jpg, .jpeg"></input>
         </fieldset>
         <button onClick={handlesubmit}>Upload</button>
-      </form>
-      <p>_________________{responsess}_________________</p>
-      <form>
-        <fieldset>
-          <input onChange={fileschangehandler} multiple name="image" type="file" accept=".jpg, .jpeg"></input>
-        </fieldset>
-        <button onClick={handleUpload}>Upload</button>
-        <button onClick={processUpload1}>Process</button>
-      </form>
-      <form>
-        <fieldset>
-          <input onChange={filechangehandler} multiple name="image" type="file" accept=".jpg, .jpeg"></input>
-        </fieldset>
-        <button onClick={handlesubmit1}>Upload</button>
       </form>
       <p>_________________{responsess}_________________</p>
     </div>
