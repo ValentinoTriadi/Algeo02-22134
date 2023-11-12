@@ -22,13 +22,13 @@ def convertToGrayscale(imageArray):
     new[...] = (rgb[...,0] * 0.29) + (rgb[...,1] * 0.587) + (rgb[...,2] * 0.114)
     return new
 
-def quantization(grayscale_matrix, num_levels=256):
-    quantization_range = np.linspace(0, 255, num_levels)
-    quantized_matrix = np.digitize(grayscale_matrix, quantization_range) - 1
+#def quantization(grayscale_matrix, num_levels=256):
+    #quantization_range = np.linspace(0, 255, num_levels)
+    #quantized_matrix = np.digitize(grayscale_matrix, quantization_range) - 1
     # metode bilinear interpolation supaya jadi 256x256
     # resized_matrix = np.array(Image.fromarray(quantized_matrix.astype('int')).resize((256, 256), Image.BILINEAR))
     # return resized_matrix
-    return quantized_matrix
+    #return quantized_matrix
 
 # def create_co_occurrence_matrix(input_matrix, quantization_level):
     # Membuat framework matrix
@@ -101,9 +101,10 @@ def pictureToTextureVector(img, isUpload, filename):
     # print("RGB",rgb)
     grayscale_matrix = convertToGrayscale(rgb)
     # print("G",grayscale_matrix)
-    quantized_matrix = quantization(grayscale_matrix)
+    #quantized_matrix = quantization(grayscale_matrix)
     # print("q",quantized_matrix)
-    glcm_matrix = create_co_occurrence_matrix(quantized_matrix, 256)
+    #glcm_matrix = create_co_occurrence_matrix(quantized_matrix, 256)
+    glcm_matrix = create_co_occurrence_matrix(grayscale_matrix, 256)
     print("GLCM",glcm_matrix)
     sum_glcm_matrix = np.sum(glcm_matrix)
     norm_glcm_matrix = glcm_matrix[...] / sum_glcm_matrix 
