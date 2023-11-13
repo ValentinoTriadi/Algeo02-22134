@@ -6,7 +6,7 @@ from PIL import Image
 import io, os, shutil, time, json
 from CBIRWarna import colorSimiliarity, compareWarna
 from CBIRTekstur import pictureToTextureVector, compareTekstur
-from IMGScraper import imageScraper
+from Bonus import imageScraper, exportPDF
 
 app = FastAPI()
 
@@ -95,18 +95,17 @@ async def prosesWarna():
 async def searchWarna(file: bytes = File(...), namafile: str = Form(...)):
     if os.path.isfile("./hasil.json"):
         os.remove("./hasil.json")
+    if os.path.isfile(f"static/search.jpg"):
+        os.remove(f"static/search.jpg")
     start = time.time()
     image = Image.open(io.BytesIO(file))
-    image = image.save(f"static/{namafile}")
+    image = image.save(f"static/search.jpg")
 
     if (not os.path.exists(dir_path)):
         return {"Status": "Fail"}
     result = compareWarna(namafile)
-    os.remove(f"static/{namafile}")
     end = time.time()
     print("Execution Time:", end-start,'s')
-    if os.path.isfile(f"static/{namafile}"):
-        os.remove(f"static/{namafile}")
     return {"Status":"Success"}
 
 @app.get("/proses-tekstur/")
@@ -134,14 +133,15 @@ async def prosesTekstur():
 async def searchTekstur(file: bytes = File(...), namafile: str = Form(...)):
     if os.path.isfile("./hasil.json"):
         os.remove("./hasil.json")
+    if os.path.isfile("static/search.jpg"):
+        os.remove("static/search.jpg")
     start = time.time()
     image = Image.open(io.BytesIO(file))
-    image = image.save(f"./static/{namafile}")
+    image = image.save(f"static/search.jpg")
 
     if (not os.path.exists(dir_path)):
         return {"Status": "Fail"}
     result = compareTekstur(namafile)
-    os.remove(f"./static/{namafile}")
     end = time.time()
     print("Execution Time:", end-start,'s')
     return {"Status":"Success"}
@@ -150,7 +150,11 @@ async def searchTekstur(file: bytes = File(...), namafile: str = Form(...)):
 @app.get("/image-scarpe/")
 def imageScrape(url: str = Form(...)):
     deleteDataSet()
-    count = imageScraper()
+    count = imageScraper(url)
     if (count != 0):
         return {"scrapeStatus":"Complete"}
     return {"scrapeStatus":"Fail"}
+
+@app.get("/pdf-download/")
+def downloadPDF():
+    return

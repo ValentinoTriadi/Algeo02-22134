@@ -163,3 +163,5 @@ cython_debug/
 cache.txt
 hasil.json
 dataset/
+PDFResult.html
+PDFResult.pdf

@@ -90,6 +90,7 @@ def parseTXT(Line):
     return r
 
 def compareWarna(filename):
+    start = time.time()
     img = Image.open(f"static/{filename}")
     img = colorSimiliarity(img, False, filename)
     ret = {}
@@ -101,7 +102,9 @@ def compareWarna(filename):
         if (sim >= 60):
             ret[f"{temp[0]}"] = round(sim, 2)
 
+    end = time.time()
     ret = {key: val for key, val in sorted(ret.items(), key = lambda ele: ele[1], reverse = True)}
+    ret["Time"] = round(end-start,2)
     f = open("hasil.json", 'w', encoding='utf-8')
     f.write(json.dumps(ret))
     f.close

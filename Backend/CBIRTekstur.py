@@ -1,7 +1,6 @@
 from PIL import Image
 import numpy as np
-import ast
-import json 
+import ast, json, time
 
 #Konsep CBIR dengan parameter tekstur
 #1. ubah jadi greyscale pakai rumus Y
@@ -72,6 +71,7 @@ def parseTXT(Line):
     return r
 
 def compareTekstur(filename):
+    start = time.time()
     img = Image.open(f"static/{filename}")
     img = pictureToTextureVector(img, False, filename)
     ret = {}
@@ -87,6 +87,8 @@ def compareTekstur(filename):
             ret[f"{temp[0]}"] = round(sim, 2)
 
     ret = {key: val for key, val in sorted(ret.items(), key = lambda ele: ele[1], reverse = True)}
+    end = time.time()
+    ret["Time"] = round(end-start,2)
     f = open("hasil.json", 'w', encoding='utf-8')
     f.write(json.dumps(ret))
     f.close
