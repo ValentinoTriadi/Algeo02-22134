@@ -11,9 +11,9 @@ export default function Home() {
     <main className='w-full h-full p-12 flex flex-col items-center justify-center'>
       <Image src={WebBG} alt="Background Website" className="h-full w-full fixed top-0 left-0 z-[-100] text-[#2F3238]"/>
       <div className='mt-[175px]' />
-      <h1 className="text-center font-semibold text-4xl" data-aos='zoom-in'>Tugas Besar 2 IF2123</h1>
-      <h1 className="text-center font-semibold text-4xl mt-6" data-aos='zoom-in'>Aljabar Linier dan Geometri</h1>
-      <h1 className="text-center font-semibold text-3xl mt-6" data-aos='zoom-in'>Aplikasi Aljabar Vektor dalam Sistem Temu Balik Gambar</h1>
+      <h1 className="text-center font-semibold text-4xl">Tugas Besar 2 IF2123</h1>
+      <h1 className="text-center font-semibold text-4xl mt-6">Aljabar Linier dan Geometri</h1>
+      <h1 className="text-center font-semibold text-3xl mt-6">Aplikasi Aljabar Vektor dalam Sistem Temu Balik Gambar</h1>
       <Link href='/about-tubes'>
         <button className="py-4 px-8 border-[#2F3238] border-2 rounded-full w-[250px] mt-12 bg-[#2F3238] text-white flex justify-center transition-all hover:justify-around hover:scale-105">
           Let's Get Started!

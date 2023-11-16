@@ -1,30 +1,160 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, HTTPException, status, File, Form, UploadFile, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from typing import List
+from PIL import Image
+import io, os, shutil, time, json
+from CBIRWarna import colorSimiliarity, compareWarna
+from CBIRTekstur import pictureToTextureVector, compareTekstur
+from Bonus import imageScraper, exportPDF
 
 app = FastAPI()
 
-class SimilarImage(BaseModel):
-    filename: str
-    similarity: float
+# origins = ["http://localhost:3000/"]    
 
-# Fungsi untuk menghitung kemiripan gambar dengan parameter tekstur
-def calculate_similarity(input_image):
-    # Lakukan perhitungan CBIR dengan parameter tekstur di sini
-    # Kembalikan daftar gambar yang mirip dan nilai persentase kemiripan
-    
-    similar_images = []  # Contoh daftar gambar yang mirip
-    similar_images.append(SimilarImage(filename="image1.jpg", similarity=85.0))
-    similar_images.append(SimilarImage(filename="image2.jpg", similarity=75.0))
-    
-    return similar_images
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=True,
+)
 
-@app.post("/upload/")
-async def upload_file(file: UploadFile):
-  # Simpan file yang diunggah (file = gambar input)
-  with open("input_image.jpg", "wb") as f:
-      f.write(file.file.read())
-  
-  # Hitung kemiripan gambar dengan parameter tekstur
-  similar_images = calculate_similarity("input_image.jpg")
-  
-  # Kembalikan hasil CBIR dalam bentuk metadata
-  return similar_images
+dir_path = 'static/dataset'
+
+app.mount("/static/", StaticFiles(directory="static"), name="static")
+
+@app.get("/hasil/")
+async def asdfsad():
+    if (os.path.exists("hasil.json")):
+        f = open("hasil.json", 'r', encoding='utf-8')
+        ret = f.read()
+        f.close()
+        return (ret)
+    return json.dumps({})
+
+@app.get("/")
+async def bro():
+    return "hALO"
+
+@app.post("/uploadfiles/")
+async def upload_files(files: List[UploadFile] = File(...)):
+    if os.path.isfile("./hasil.json"):
+        os.remove("./hasil.json")
+    if os.path.isdir("./static/dataset"):
+        shutil.rmtree("./static/dataset")
+    start = time.time()
+    count = 0
+    if (not os.path.exists(dir_path)):
+        os.mkdir(dir_path)
+    for file in files:
+        count += 1
+        # print(file.filename)
+        contents = await file.read()
+        img = Image.open(io.BytesIO(contents))
+        # img.show()
+        if (not os.path.exists(f"{dir_path}\{file.filename}")):
+            img.save(f"{dir_path}\{file.filename}")
+
+    end = time.time()
+    print("Uploaded", count, "Files in", end-start,'s')
+    return {"uploadStatus": "Complete"}
+
+@app.get("/delete-dataset/")
+async def deleteDataSet():
+    if os.path.isfile("./hasil.json"):
+        os.remove("./hasil.json")
+    if os.path.isdir("static/dataset"):
+        shutil.rmtree("static/dataset")
+    if os.path.isfile("cache.txt"):
+        os.remove("cache.txt")
+    return {"deleteStatus":"Complete"}
+
+@app.get("/proses-warna/")
+async def prosesWarna():
+    print("Start")
+    if os.path.isfile("./hasil.json"):
+        os.remove("./hasil.json")
+    if os.path.isfile("./cache.txt"):
+        os.remove("./cache.txt")
+    start = time.time()
+    count = 0
+    if (not os.path.isdir(dir_path)):
+        return {"proccessStatus":"Fail"}
+    for filename in os.listdir(dir_path):
+        count += 1
+        if filename.endswith('.jpg') or filename.endswith('.jpeg'):
+            img = Image.open(f"{dir_path}/{filename}")
+            colorSimiliarity(img, True, filename)
+
+    end = time.time()
+    print("Process", count, "Files in", end-start,'s')
+    return {"processStatus": "Complete"}
+
+@app.post("/search-warna/")
+async def searchWarna(file: bytes = File(...), namafile: str = Form(...)):
+    if os.path.isfile("./hasil.json"):
+        os.remove("./hasil.json")
+    if os.path.isfile(f"static/search.jpg"):
+        os.remove(f"static/search.jpg")
+    start = time.time()
+    image = Image.open(io.BytesIO(file))
+    image = image.save(f"static/search.jpg")
+
+    if (not os.path.exists(dir_path)):
+        return {"Status": "Fail"}
+    result = compareWarna(namafile)
+    end = time.time()
+    print("Execution Time:", end-start,'s')
+    return {"Status":"Success"}
+
+@app.get("/proses-tekstur/")
+async def prosesTekstur():
+    if os.path.isfile("./hasil.json"):
+        os.remove("./hasil.json")   
+    print("Start")
+    if os.path.isfile("./cache.txt"):
+        os.remove("./cache.txt")
+    start = time.time()
+    count = 0
+    if (not os.path.isdir(dir_path)):
+        return {"proccessStatus":"Fail"}
+    for filename in os.listdir(dir_path):
+        count += 1
+        if filename.endswith('.jpg') or filename.endswith('.jpeg'):
+            img = Image.open(f"./static/dataset/{filename}")
+            pictureToTextureVector(img, True, filename)
+
+    end = time.time()
+    print("Process", count, "Files in", end-start,'s')
+    return {"processStatus": "Complete"}
+
+@app.post("/search-tekstur/")
+async def searchTekstur(file: bytes = File(...), namafile: str = Form(...)):
+    if os.path.isfile("./hasil.json"):
+        os.remove("./hasil.json")
+    if os.path.isfile("static/search.jpg"):
+        os.remove("static/search.jpg")
+    start = time.time()
+    image = Image.open(io.BytesIO(file))
+    image = image.save(f"static/search.jpg")
+
+    if (not os.path.exists(dir_path)):
+        return {"Status": "Fail"}
+    result = compareTekstur(namafile)
+    end = time.time()
+    print("Execution Time:", end-start,'s')
+    return {"Status":"Success"}
+
+
+@app.get("/image-scarpe/")
+def imageScrape(url: str = Form(...)):
+    deleteDataSet()
+    count = imageScraper(url)
+    if (count != 0):
+        return {"scrapeStatus":"Complete"}
+    return {"scrapeStatus":"Fail"}
+
+@app.get("/pdf-download/")
+def downloadPDF():
+    return
