@@ -13,32 +13,24 @@ function App() {
   const [responsess, setResponsess] = useState(null)
   
   const downloadPDF = () => {
-    var filename;
-    const file = axios.get('http://127.0.0.1:8000/pdf-download', {
-        responseType: 'blob'
+    axios.get('http://127.0.0.1:8000/pdf-download', { responseType: 'blob' })
+      .then((response) => {
+        const link = document.createElement('a');
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', 'PDFImageSearch.pdf');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
       })
-      .then(response => {
-        const disposition = response.headers['content-disposition'];
-        filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1];
-        if (filename.toLowerCase().startsWith("utf-8''"))
-            filename = decodeURIComponent(filename.replace("utf-8''", ''));
-        else
-            filename = filename.replace(/['"]/g, '');
-        return response.data;
-      })
-      .then(blob => {
-        var url = window.URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a); // append the element to the dom
-        a.click();
-        a.remove(); // afterwards, remove the element  
-      })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
-  }
+  };
+  
+  
 
   const fileschangehandler = (e) => {
     const newformData = new FormData();

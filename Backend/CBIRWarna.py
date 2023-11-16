@@ -91,7 +91,7 @@ def parseTXT(Line):
 
 def compareWarna(filename):
     start = time.time()
-    img = Image.open(f"static/{filename}")
+    img = Image.open(f"static/search.jpg")
     img = colorSimiliarity(img, False, filename)
     ret = {}
     f = open('./cache.txt', 'r')

@@ -1,10 +1,10 @@
 from fastapi import FastAPI, HTTPException, status, File, Form, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from typing import List
 from PIL import Image
-import io, os, shutil, time, json
+import io, os, shutil, time, json, requests
 from CBIRWarna import colorSimiliarity, compareWarna
 from CBIRTekstur import pictureToTextureVector, compareTekstur
 from Bonus import imageScraper, exportPDF
@@ -161,6 +161,6 @@ async def downloadPDF():
     start = time.time()
     exportPDF()
     end = time.time()
-    print("Created PDF File in",end-start,"s")
-    file_path = "./PDFResult.pdf"
-    return FileResponse(file_path, media_type='application/pdf', filename=file_path)
+    print("Created PDF File in", end - start, "s")
+    file_path = "./static/PDFResult.pdf"
+    return FileResponse(file_path, content_disposition_type="attachment", filename="PDFImageSearch.pdf")

@@ -49,7 +49,7 @@ def render_html(jsonfile):
     html_file = open(html_path, 'w')
     html_file.write(output_text)
     html_file.close()
-    pdf_path = f'./PDFResult.pdf'    
+    pdf_path = f'./static/PDFResult.pdf'    
     html2pdf(html_path, pdf_path)   
 
 def html2pdf(html_path, pdf_path):
