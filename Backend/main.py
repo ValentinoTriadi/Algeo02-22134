@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException, status, File, Form, UploadFile, Response
+from fastapi import FastAPI, HTTPException, status, File, Form, UploadFile
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from typing import List
@@ -89,7 +90,7 @@ async def prosesWarna():
 
     end = time.time()
     print("Process", count, "Files in", end-start,'s')
-    return {"processStatus": "Complete"}
+    return {"processStatus": "Complete", "TimeProcess": round(end-start, 2)}
 
 @app.post("/search-warna/")
 async def searchWarna(file: bytes = File(...), namafile: str = Form(...)):
@@ -127,7 +128,7 @@ async def prosesTekstur():
 
     end = time.time()
     print("Process", count, "Files in", end-start,'s')
-    return {"processStatus": "Complete"}
+    return {"processStatus": "Complete", "TimeProcess": round(end-start,2)}
 
 @app.post("/search-tekstur/")
 async def searchTekstur(file: bytes = File(...), namafile: str = Form(...)):
@@ -156,5 +157,10 @@ def imageScrape(url: str = Form(...)):
     return {"scrapeStatus":"Fail"}
 
 @app.get("/pdf-download/")
-def downloadPDF():
-    return
+async def downloadPDF():
+    start = time.time()
+    exportPDF()
+    end = time.time()
+    print("Created PDF File in",end-start,"s")
+    file_path = "./PDFResult.pdf"
+    return FileResponse(file_path, media_type='application/pdf', filename=file_path)

@@ -29,9 +29,10 @@
         <h3>- Atqiya Haydar Lukman</h3>
         <h3>- Valentino Chryslie Triadi</h3>
         <img src="{{path}}/static/search.jpg" alt="" style="width: 300px;">
+        <h2>Execution Time: {{time}} s</h2>
     </div>
+
     {% for item in items.keys() %}
-      {% if item == "Time"}
     <div class="containerImage">
         <img src="{{path}}/static/dataset/{{item}}" alt="" style="width: 200px;">
         <h2>{{items[item]}}%</h2>

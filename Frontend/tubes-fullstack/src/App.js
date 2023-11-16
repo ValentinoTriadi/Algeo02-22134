@@ -12,7 +12,34 @@ function App() {
   const [formData, setFormData] = useState(new FormData());
   const [responsess, setResponsess] = useState(null)
   
- 
+  const downloadPDF = () => {
+    var filename;
+    const file = axios.get('http://127.0.0.1:8000/pdf-download', {
+        responseType: 'blob'
+      })
+      .then(response => {
+        const disposition = response.headers['content-disposition'];
+        filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1];
+        if (filename.toLowerCase().startsWith("utf-8''"))
+            filename = decodeURIComponent(filename.replace("utf-8''", ''));
+        else
+            filename = filename.replace(/['"]/g, '');
+        return response.data;
+      })
+      .then(blob => {
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a); // append the element to the dom
+        a.click();
+        a.remove(); // afterwards, remove the element  
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
   const fileschangehandler = (e) => {
     const newformData = new FormData();
     const files = e.target.files;
@@ -156,7 +183,7 @@ function App() {
       </form>
       <form>
         <fieldset>
-          <input onChange={filechangehandler} multiple name="image" type="file" accept=".jpg, .jpeg"></input>
+          <input onChange={filechangehandler}  name="image" type="file" accept=".jpg, .jpeg"></input>
         </fieldset>
         <button onClick={handlesubmit}>Upload</button>
       </form>
@@ -170,12 +197,16 @@ function App() {
       </form>
       <form>
         <fieldset>
-          <input onChange={filechangehandler} multiple name="image" type="file" accept=".jpg, .jpeg"></input>
+          <input onChange={filechangehandler} name="image" type="file" accept=".jpg, .jpeg"></input>
         </fieldset>
         <button onClick={handlesubmit1}>Upload</button>
       </form>
       <p>_________________{responsess}_________________</p>
+      <div>
+        <button onClick={downloadPDF}>Export PDF</button>
+      </div>
     </div>
+
   );
 }
 
