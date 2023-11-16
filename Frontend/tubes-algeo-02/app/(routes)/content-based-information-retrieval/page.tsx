@@ -14,7 +14,7 @@ import axios from "axios"
 const page: React.FC = () => {
   const [displayed, setDisplayed] = useState<StaticImageData>(ImagePlaceholder)
   const [displayedName, setDisplayedName] = useState<String>('')
-  const [textureEnabled, setTextureEnabled] = useState(false)
+  const [textureEnabled, setTextureEnabled] = useState<boolean>(false)
   const [uploadedFiles, setUploadedFiles] = useState<FileList | null>(null);
   const [currentPage, setCurrentPage] = useState(0); // Menyimpan halaman saat ini
   const [tools, setTools] = useState('Lens')
@@ -22,6 +22,7 @@ const page: React.FC = () => {
   const [fileImage, setFileImage] = useState<File | null>(null);
   const [isProcessed, setIsProcessed] = useState(false);
   const [timeProcess, setTimeProcess] = useState(0.0);
+  const [similarity, setSimilarity] = useState<FileList | null>(null);
 
   const itemsPerPage = 9; // Jumlah gambar per halaman (diubah menjadi 6)
 
@@ -41,6 +42,18 @@ const page: React.FC = () => {
   const handlePageClick = (data: { selected: number }) => {
     setCurrentPage(data.selected);
   };
+
+  // Switch handler
+  const switchHandler = () => {
+    setTextureEnabled((prevTextureEnabled) => !prevTextureEnabled);
+    setIsProcessed(false);
+
+    // if (!textureEnabled) {
+    //   console.log("Switched to Color")
+    // } else {
+    //   console.log("Switched to Texture")
+    // }
+  }
 
   // Mengunggah gambar
   const imageHandler = () => {
@@ -71,7 +84,6 @@ const page: React.FC = () => {
   // Mengunggah dataset
   const handleDatasetInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      // setUploadedFiles(e.target.files);
       setIsProcessed(false);
     }
 
@@ -119,16 +131,6 @@ const page: React.FC = () => {
           console.log("PROCESSED");
           setIsProcessed(true);
         }
-
-        // const fileList = Object.keys(response).map((key) => {
-        //   // const url = `localhost:8000/static/dataset/${key}`
-        //   const url = `../../api/static/dataset/${key}`
-        //   const file = new File(url, key, { type: "image/jpeg" });
-        //   return file;
-        // });
-
-        // console.log(fileList);
-        // setUploadedFiles(fileList);
       }
 
       const formData = new FormData();
@@ -147,7 +149,6 @@ const page: React.FC = () => {
       const requestOptions = {
         method: "POST",
         body: formData,
-        // headers:{'Content-Type': 'application/json'}
       }
 
       try {
@@ -173,7 +174,8 @@ const page: React.FC = () => {
       console.log(cekJson);
       console.log("SEARCHED");
      
-      const fileList = [];
+      const fileList: File[] = [];
+      const similarityList: File[] = [];
       for (const key of Object.keys(cekJson)) {
         if (key == "Time"){
           setTimeProcess(cekJson[key]);
@@ -182,14 +184,46 @@ const page: React.FC = () => {
           const response = await fetch(url);
           const blob = await response.blob();
           const file = new File([blob], key, { type: "image/jpeg" });
+          const similarity = cekJson[key];
           fileList.push(file);
+          similarityList.push(similarity);
         }
       }
 
       console.log(fileList);
       setUploadedFiles(fileList);
+      setSimilarity(similarityList);
     }
   }
+
+  const deleteDatasetHandler = () => {}
+  const exportPDFHandler = () => {}
+
+  // Fungsi Camera
+  const webcamRef = useRef(null);
+  const [displayedCamera, setDisplayedCamera] = useState('');
+  const [countdown, setCountdown] = useState(5);
+
+  useEffect(() => {
+    const captureInterval = setInterval(() => {
+      if (webcamRef.current) {
+        const imageSrc = webcamRef.current.getScreenshot();
+        setDisplayedCamera(imageSrc);
+        setCountdown(6)
+      }
+    }, 5000);
+
+    const countdownInterval = setInterval(() => {
+      if (countdown > 0) {
+        setCountdown((prevCountdown) => prevCountdown - 1); // Menggunakan updater untuk memastikan pembaruan nilai yang benar
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(captureInterval);
+      clearInterval(countdownInterval);
+    };
+  }, []);
 
   return (
     <section className='w-full h-full p-12 flex flex-col items-center justify-center'>
@@ -201,6 +235,40 @@ const page: React.FC = () => {
         <p onClick={() => setTools('Camera')} className='cursor-pointer hover:scale-125 transition-all'>Camera</p>
         <p onClick={() => setTools('Scrapper')} className='cursor-pointer hover:scale-125 transition-all'>Scrapper</p>
       </div>
+
+      {/* CAMERA INPUT */}
+      {
+        tools == 'Camera' && (
+          <div className="shadow-xl h-[400px] w-[800px] rounded-xl bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-8 flex justify-between items-center backdrop-blur-sm">
+            <div className='flex flex-col items-center gap-y-4'>
+              <p  className='font-bold text-2xl'>Camera</p>
+              {
+                <div className='text-4xl font-bold text-white absolute top-[175px]'>
+                  {countdown}
+                </div>
+              }
+              <Webcam
+                audio={false}
+                ref={webcamRef}
+                height={325}
+                width={325}
+                className='rounded-xl h-[250px] w-[325px]'
+              />
+              
+            </div>
+            <div className='flex flex-col items-center gap-y-4'>
+              <p className='font-bold text-2xl'>Result</p>
+              <Image
+              src={displayedCamera}
+              alt="Captured Image"
+              height={325}
+              width={325}
+              className='border-black border-2 border-opacity-5 rounded-xl h-[250px] w-[325px]'
+            />
+            </div>
+          </div>
+        )
+      }
 
       {/* LENS INPUT */}
       {
@@ -226,7 +294,7 @@ const page: React.FC = () => {
             <div className='flex flex-col gap-y-4 items-center'>
               <div className='flex gap-x-4'>
                 <p>Color</p>
-                  <Switch onChange={() => setTextureEnabled(!textureEnabled)} />
+                  <Switch onClick={switchHandler} />
                 <p>Texture</p>
               </div>
               <Button className='w-[200px]' onClick={searchHandler}>
@@ -251,39 +319,46 @@ const page: React.FC = () => {
           ref={folderInputRef}
         />
       </div>
-      <div className='shadow-xl h-[800px] w-[800px] rounded-xl bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-8 flex justify-between mt-12 backdrop-blur-sm'>
-      {displayedFiles.length > 0 && (
-          <div className='grid grid-cols-3 items-center justify-center'>
-            {displayedFiles.map((file, index) => (
-              <Image
-                key={index}
-                src={URL.createObjectURL(file)}
-                alt={`Uploaded Image ${index}`}
-                width={225}
-                height={225}
-                className='h-[225px] w-[225px] mx-4 rounded-xl'
-              />
-            ))}
-          </div>
-        )}
+      <div className='shadow-xl h-[1050px] w-[800px] rounded-xl bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-8 flex justify-between mt-12 backdrop-blur-sm flex-col'>
+        <div className='flex justify-between items-center'>
+          <h5 className='font-semibold'>Time Processed : {timeProcess}s </h5>
+          <Button onClick={deleteDatasetHandler}>Delete Dataset</Button>
+        </div>
+        {displayedFiles.length > 0 && (
+            <div className='grid grid-cols-3 items-start justify-start my-2'>
+              {displayedFiles.map((file, index) => (
+                <div key={index}>
+                  <Image
+                  src={URL.createObjectURL(file)}
+                  alt={`Uploaded Image ${index}`}
+                  width={225}
+                  height={225}
+                  className='h-[225px] w-[225px] m-4 rounded-xl'
+                  />
+                  <p className='relative bottom-0 font-bold text-center'>{similarity && similarity[index]}%</p>      
+                </div>
+              ))}
+            </div>
+          )}
+        <Button onChange={exportPDFHandler}>Export PDF</Button>
       </div>
       {uploadedFiles && pageCount > 1 && (
-        <div className='flex justify-center space-x-2 mt-4'>
-          <ReactPaginate
-            previousLabel={'Previous'}
-            nextLabel={'Next'}
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={'pagination'}
-            subContainerClassName={'pages pagination'}
-            activeClassName={'active'}
-            pageClassName={'w-[50px] flex items-center justify-center bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-2 rounded-xl font-bold'} // Kelas untuk nomor halaman
-            previousClassName={'w-[150px] flex items-center justify-center bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-2 rounded-xl font-bold'} // Kelas untuk tombol "Previous"
-            nextClassName={'w-[150px] flex items-center justify-center bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-2 rounded-xl font-bold'} // Kelas untuk tombol "Next"
-          />
-        </div> 
+      <div className='text-center mt-4'>
+        <ReactPaginate
+          previousLabel={'Previous'}
+          nextLabel={'Next'}
+          pageCount={pageCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageClick}
+          containerClassName={'pagination'}
+          subContainerClassName={'pages pagination'}
+          activeClassName={'active'}
+          pageClassName={'w-[50px] mx-1 inline-block bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-2 rounded-md font-bold  backdrop-blur-sm '} // Kelas untuk nomor halaman
+          previousClassName={'w-[150px] inline-block bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-2 rounded-md font-bold  backdrop-blur-sm '} // Kelas untuk tombol "Previous"
+          nextClassName={'w-[150px] inline-block bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-2 rounded-md font-bold  backdrop-blur-sm '} // Kelas untuk tombol "Next"
+        />
+      </div>
       )}
     </section>
   )

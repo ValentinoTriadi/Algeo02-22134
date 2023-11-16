@@ -72,7 +72,7 @@ def parseTXT(Line):
 
 def compareTekstur(filename):
     start = time.time()
-    img = Image.open(f"static/{filename}")
+    img = Image.open(f"static/search.jpg")
     img = pictureToTextureVector(img, False, filename)
     ret = {}
     f = open('./cache.txt', 'r')
