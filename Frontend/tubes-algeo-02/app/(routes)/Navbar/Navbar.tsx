@@ -10,17 +10,17 @@ const Navbar = () => {
       <nav className="w-full flex justify-between gap-x-20 py-6 px-12  shadow-md font-poppins text-[#2F3238] font-bold">
         <Image src={Furina} alt="furina" height={40} width={40}/>
         <div className="flex gap-x-20 items-center">
-          <Link href='/' className="hover:scale-125 transition-all">
+          <Link href='/' className="hover:scale-125 transition-all cursor-pointer">
             HOME 
           </Link>
-          <Link href='/about-tubes' className="hover:scale-125 transition-all">
+          <Link href='/about-tubes' className="hover:scale-125 transition-all cursor-pointer">
             ABOUT
           </Link>
-          <Link href='/content-based-information-retrieval' className="hover:scale-125 transition-all">
+          <Link href='/content-based-information-retrieval' className="hover:scale-125 transition-all cursor-pointer">
             TOOLS
           </Link>
         </div>
-        <Button className="w-[100px] py-4 px-8 rounded-full">
+        <Button className="w-[100px] py-4 px-8 rounded-full cursor-pointer">
           Login
         </Button>
       </nav>

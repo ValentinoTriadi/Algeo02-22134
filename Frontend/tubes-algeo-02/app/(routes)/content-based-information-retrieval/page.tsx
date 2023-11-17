@@ -1,7 +1,7 @@
 "use client"
 
 import Image, { StaticImageData } from 'next/image'
-import { useState, useRef, ChangeEvent, useEffect } from 'react'
+import { useState, useRef, ChangeEvent, useEffect, FormEvent } from 'react'
 import WebBG from '@/public/WebBG.jpg'
 import ImagePlaceholder from '@/public/ddummy.png'
 import { Button } from '@/components/ui/button'
@@ -23,6 +23,7 @@ const page: React.FC = () => {
   const [isProcessed, setIsProcessed] = useState(false);
   const [timeProcess, setTimeProcess] = useState(0.0);
   const [similarity, setSimilarity] = useState<FileList | null>(null);
+  const [requestsSent, setRequestsSent] = useState(false);
 
   const itemsPerPage = 9; // Jumlah gambar per halaman (diubah menjadi 6)
 
@@ -91,11 +92,14 @@ const page: React.FC = () => {
       const formData = new FormData();
       const files  = e.target.files;
 
+      console.log(files);
+
       for (let i = 0; i < files.length; i++) {
         formData.append('files', files[i]);
       }
 
-      console.log(formData);
+      console.log(JSON.stringify(formData));
+      console.log("SUCCESS")
 
       axios.post('http://localhost:8000/uploadfiles', formData, {
         headers: {
@@ -124,10 +128,12 @@ const page: React.FC = () => {
         }
 
         const data = await response.json();
-        const keysdata = Object.keys(data)[0];
-        const value = data[keysdata]
+        const keysdata = Object.keys(data);
+        const value = data[keysdata[0]]
 
+        const valueProcess = data[keysdata[1]];
         if (value == "Complete") {
+          setTimeProcess((prevTimeProcess) => prevTimeProcess + valueProcess);
           console.log("PROCESSED");
           setIsProcessed(true);
         }
@@ -174,30 +180,61 @@ const page: React.FC = () => {
       console.log(cekJson);
       console.log("SEARCHED");
      
-      const fileList: File[] = [];
-      const similarityList: File[] = [];
-      for (const key of Object.keys(cekJson)) {
-        if (key == "Time"){
-          setTimeProcess(cekJson[key]);
-        } else {
-          const url = `http://localhost:8000/static/dataset/${key}`;
-          const response = await fetch(url);
-          const blob = await response.blob();
-          const file = new File([blob], key, { type: "image/jpeg" });
-          const similarity = cekJson[key];
-          fileList.push(file);
-          similarityList.push(similarity);
+      if (!requestsSent) {
+        const fileList: File[] = [];
+        const similarityList: File[] = [];
+        let fetchOperationDone = false;
+        for (const key of Object.keys(cekJson)) {
+          if (key == "Time"){
+            setTimeProcess(previousTime => previousTime + cekJson[key]);
+          } else {
+            if (!fetchOperationDone) {
+              const url = `http://localhost:8000/static/dataset/${key}`;
+              const response = await fetch(url);
+              const blob = await response.blob();
+              const file = new File([blob], key, { type: "image/jpeg" });
+              const similarity = cekJson[key];
+              fileList.push(file);
+              similarityList.push(similarity);
+            }
+          }
         }
+        
+        fetchOperationDone = true;
+        console.log(fileList);
+        setUploadedFiles(fileList);
+        setSimilarity(similarityList);
       }
-
-      console.log(fileList);
-      setUploadedFiles(fileList);
-      setSimilarity(similarityList);
+      setRequestsSent(true);
     }
   }
 
-  const deleteDatasetHandler = () => {}
-  const exportPDFHandler = () => {}
+  const resetRequestsSent = () => {
+    setRequestsSent(false);
+    searchHandler();
+  }
+
+  const deleteDatasetHandler = () => {
+    fetch("http://localhost:8000/delete-dataset/");
+  }
+
+  const exportPDFHandler = () => {
+    axios.get('http://localhost:8000/pdf-download', { responseType: 'blob' })
+    .then((response) => {
+      const link = document.createElement('a');
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      link.href = url;
+      link.setAttribute('download', 'PDFImageSearch.pdf');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
 
   // Fungsi Camera
   const webcamRef = useRef(null);
@@ -297,7 +334,7 @@ const page: React.FC = () => {
                   <Switch onClick={switchHandler} />
                 <p>Texture</p>
               </div>
-              <Button className='w-[200px]' onClick={searchHandler}>
+              <Button className='w-[200px]' onClick={resetRequestsSent}>
                 Search
               </Button>
             </div>
@@ -314,14 +351,19 @@ const page: React.FC = () => {
         <input
           className='hidden'
           type="file"
+          name="file"
+          webkitdirectory="true"
           multiple
+          accept='.jpg, .jpeg'
+          mozdirectory
+          directory
           onChange={handleDatasetInputChange}
-          ref={folderInputRef}
+          ref={folderInputRef as React.RefObject<HTMLInputElement>}
         />
       </div>
       <div className='shadow-xl h-[1050px] w-[800px] rounded-xl bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-8 flex justify-between mt-12 backdrop-blur-sm flex-col'>
         <div className='flex justify-between items-center'>
-          <h5 className='font-semibold'>Time Processed : {timeProcess}s </h5>
+          <h5 className='font-semibold'>Time Processed : {timeProcess.toFixed(1)}s </h5>
           <Button onClick={deleteDatasetHandler}>Delete Dataset</Button>
         </div>
         {displayedFiles.length > 0 && (
@@ -340,7 +382,7 @@ const page: React.FC = () => {
               ))}
             </div>
           )}
-        <Button onChange={exportPDFHandler}>Export PDF</Button>
+        <Button onClick={exportPDFHandler}>Export PDF</Button>
       </div>
       {uploadedFiles && pageCount > 1 && (
       <div className='text-center mt-4'>

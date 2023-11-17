@@ -1,9 +1,10 @@
-from fastapi import FastAPI, HTTPException, status, File, Form, UploadFile, Response
+from fastapi import FastAPI, HTTPException, status, File, Form, UploadFile
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from typing import List
 from PIL import Image
-import io, os, shutil, time, json
+import io, os, shutil, time, json, requests
 from CBIRWarna import colorSimiliarity, compareWarna
 from CBIRTekstur import pictureToTextureVector, compareTekstur
 from Bonus import imageScraper, exportPDF
@@ -53,8 +54,8 @@ async def upload_files(files: List[UploadFile] = File(...)):
         contents = await file.read()
         img = Image.open(io.BytesIO(contents))
         # img.show()
-        if (not os.path.exists(f"{dir_path}\{file.filename}")):
-            img.save(f"{dir_path}\{file.filename}")
+        if (not os.path.exists(f"{dir_path}\{file.filename.split('/')[-1]}")):
+            img.save(f"{dir_path}\{file.filename.split('/')[-1]}")
 
     end = time.time()
     print("Uploaded", count, "Files in", end-start,'s')
@@ -89,7 +90,7 @@ async def prosesWarna():
 
     end = time.time()
     print("Process", count, "Files in", end-start,'s')
-    return {"processStatus": "Complete"}
+    return {"processStatus": "Complete", "TimeProcess": round(end-start, 2)}
 
 @app.post("/search-warna/")
 async def searchWarna(file: bytes = File(...), namafile: str = Form(...)):
@@ -127,7 +128,7 @@ async def prosesTekstur():
 
     end = time.time()
     print("Process", count, "Files in", end-start,'s')
-    return {"processStatus": "Complete"}
+    return {"processStatus": "Complete", "TimeProcess": round(end-start,2)}
 
 @app.post("/search-tekstur/")
 async def searchTekstur(file: bytes = File(...), namafile: str = Form(...)):
@@ -156,5 +157,10 @@ def imageScrape(url: str = Form(...)):
     return {"scrapeStatus":"Fail"}
 
 @app.get("/pdf-download/")
-def downloadPDF():
-    return
+async def downloadPDF():
+    start = time.time()
+    exportPDF()
+    end = time.time()
+    print("Created PDF File in", end - start, "s")
+    file_path = "./static/PDFResult.html"
+    return FileResponse(file_path, content_disposition_type="attachment", filename="PDFImageSearch.pdf")

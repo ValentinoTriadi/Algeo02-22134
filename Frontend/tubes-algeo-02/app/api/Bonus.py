@@ -33,14 +33,14 @@ def imageScraper(url):
 
 
 def render_html(jsonfile):
-    """
-    Render html page using jinja based on layout.html
-    """
+    t = jsonfile["Time"]
+    del jsonfile["Time"]
     template_loader = jinja2.FileSystemLoader(searchpath="./")
     template_env = jinja2.Environment(loader=template_loader)
     template_file = "pdf.html"
     template = template_env.get_template(template_file)
     output_text = template.render(
+        time = t,
         path = os.getcwd(),
         items = jsonfile,
         )
@@ -49,7 +49,7 @@ def render_html(jsonfile):
     html_file = open(html_path, 'w')
     html_file.write(output_text)
     html_file.close()
-    pdf_path = f'./PDFResult.pdf'    
+    pdf_path = f'./static/PDFResult.pdf'    
     html2pdf(html_path, pdf_path)   
 
 def html2pdf(html_path, pdf_path):
@@ -67,11 +67,15 @@ def html2pdf(html_path, pdf_path):
         pdfkit.from_file(f, pdf_path, options=options)
 
 def exportPDF():
+    if (os.path.isfile("./hasil.json")):
+        f = open("./hasil.json", 'r')
+        lines = f.read()
+        f.close()
+        if (not lines):
+            return False
+        lines = json.loads(lines)
+        render_html(lines)
+        return True
+    else:
+        return False
 
-    f = open("./hasil.json", 'r')
-    lines = f.read()
-    f.close()
-
-    lines = json.loads(lines)
-
-    render_html(lines)
