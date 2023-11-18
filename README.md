@@ -202,9 +202,9 @@ Room for improvement:
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
-[Valentino Chryslie Triadi](https://github.com/ValentinoTriadi)
-[Atqiya Haydar Lukman](https://github.com/AtqiyaHaydar)
-[Shabrina Maharani](https://github.com/Maharanish)
+* [Valentino Chryslie Triadi](https://github.com/ValentinoTriadi)
+* [Atqiya Haydar Lukman](https://github.com/AtqiyaHaydar)
+* [Shabrina Maharani](https://github.com/Maharanish)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
