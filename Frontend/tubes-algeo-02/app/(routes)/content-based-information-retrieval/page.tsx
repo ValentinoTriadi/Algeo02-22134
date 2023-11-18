@@ -24,6 +24,7 @@ const page: React.FC = () => {
   const [timeProcess, setTimeProcess] = useState(0.0);
   const [similarity, setSimilarity] = useState<FileList | null>(null);
   const [requestsSent, setRequestsSent] = useState(false);
+  const [totalImage, setTotalImage] = useState<Number>(0);
 
   const itemsPerPage = 9; // Jumlah gambar per halaman (diubah menjadi 6)
 
@@ -193,13 +194,15 @@ const page: React.FC = () => {
               const response = await fetch(url);
               const blob = await response.blob();
               const file = new File([blob], key, { type: "image/jpeg" });
-              const similarity = cekJson[key];
+              const similarityValue = cekJson[key];
+              console.log(similarityValue);
               fileList.push(file);
-              similarityList.push(similarity);
+              similarityList.push(similarityValue);
             }
           }
         }
         
+        setTotalImage(fileList.length);
         fetchOperationDone = true;
         console.log(fileList);
         setUploadedFiles(fileList);
@@ -246,6 +249,7 @@ const page: React.FC = () => {
       if (webcamRef.current) {
         const imageSrc = webcamRef.current.getScreenshot();
         setDisplayedCamera(imageSrc);
+        setFileImage(imageSrc); // Mengubah fileImage menjadi imageSrc
         setCountdown(6)
       }
     }, 5000);
@@ -276,32 +280,45 @@ const page: React.FC = () => {
       {/* CAMERA INPUT */}
       {
         tools == 'Camera' && (
-          <div className="shadow-xl h-[400px] w-[800px] rounded-xl bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-8 flex justify-between items-center backdrop-blur-sm">
-            <div className='flex flex-col items-center gap-y-4'>
-              <p  className='font-bold text-2xl'>Camera</p>
-              {
-                <div className='text-4xl font-bold text-white absolute top-[175px]'>
-                  {countdown}
-                </div>
-              }
-              <Webcam
-                audio={false}
-                ref={webcamRef}
+          <div className="shadow-xl h-[500px] w-[800px] rounded-xl bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-8 flex flex-col gap-y-12 justify-between items-center backdrop-blur-sm">
+
+            <div className='flex w-full justify-center gap-x-8'>
+              <div className='flex flex-col items-center gap-y-4'>
+                <p  className='font-bold text-2xl'>Camera</p>
+                {
+                  <div className='text-4xl font-bold text-white absolute top-[175px]'>
+                    {countdown}
+                  </div>
+                }
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  height={325}
+                  width={325}
+                  className='rounded-xl h-[250px] w-[325px]'
+                />
+              </div>
+              <div className='flex flex-col items-center gap-y-4'>
+                <p className='font-bold text-2xl'>Result</p>
+                <Image
+                src={displayedCamera}
+                alt="Captured Image"
                 height={325}
                 width={325}
-                className='rounded-xl h-[250px] w-[325px]'
+                className='border-black border-2 border-opacity-5 rounded-xl h-[250px] w-[325px]'
               />
-              
+              </div>
             </div>
-            <div className='flex flex-col items-center gap-y-4'>
-              <p className='font-bold text-2xl'>Result</p>
-              <Image
-              src={displayedCamera}
-              alt="Captured Image"
-              height={325}
-              width={325}
-              className='border-black border-2 border-opacity-5 rounded-xl h-[250px] w-[325px]'
-            />
+
+            <div className='flex gap-y-4 items-center gap-x-12'>
+              <div className='flex gap-x-4'>
+                <p>Color</p>
+                  <Switch onClick={switchHandler} />
+                <p>Texture</p>
+              </div>
+              <Button className='w-[200px] rounded-full' onClick={resetRequestsSent}>
+                Search
+              </Button>
             </div>
           </div>
         )
@@ -363,7 +380,7 @@ const page: React.FC = () => {
       </div>
       <div className='shadow-xl h-[1050px] w-[800px] rounded-xl bg-[#F5F6F9] bg-opacity-10 border-2 border-black border-opacity-5 p-8 flex justify-between mt-12 backdrop-blur-sm flex-col'>
         <div className='flex justify-between items-center'>
-          <h5 className='font-semibold'>Time Processed : {timeProcess.toFixed(1)}s </h5>
+          <h5 className='font-semibold'>Displayed {totalImage} images in {timeProcess.toFixed(1)}s </h5>
           <Button onClick={deleteDatasetHandler}>Delete Dataset</Button>
         </div>
         {displayedFiles.length > 0 && (
@@ -377,7 +394,7 @@ const page: React.FC = () => {
                   height={225}
                   className='h-[225px] w-[225px] m-4 rounded-xl'
                   />
-                  <p className='relative bottom-0 font-bold text-center'>{similarity && similarity[index]}%</p>      
+                  <p className='relative bottom-0 font-bold text-center'>{similarity[index+currentPage*itemsPerPage]}%</p>      
                 </div>
               ))}
             </div>
