@@ -58,7 +58,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#contributor">Contributing</a></li>
+    <li><a href="#contributor">Contributor</a></li>
   </ol>
 </details>
 
@@ -81,7 +81,7 @@ GoMilk is Image Retrieval System Website with CONTENT-BASED INFORMATION RETRIEVA
 * [![Tailwind][TailwindCSS]][Tailwind-url]
 * [![Python][Python]][Python-url]
 * [![FastAPI][FastAPI]][FastAPI-url]
-* [![wkhtmltopdf][wkhtmltopdf]][https://wkhtmltopdf.org/]
+* [![wkhtmltopdf][wkhtmltopdf]][wkhtmltopdf-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -108,19 +108,22 @@ GoMilk is Image Retrieval System Website with CONTENT-BASED INFORMATION RETRIEVA
   <summary>WKHTMLTOPDF INSTALLATION</summary>
   <ol>
     <li>Download wkhtmltopdf
-    ```sh
-    click https://wkhtmltopdf.org/downloads.html
-    ```
+
+        ```sh
+        click https://wkhtmltopdf.org/downloads.html
+        ```
     </li>
     <li>Set Up Environment
-    ```sh
-    put '{Personal Path}\wkhtmltopdf\bin' in system environment path 
-    ```
+
+        ```sh
+        put '{Personal Path}\wkhtmltopdf\bin' in system environment path 
+        ```
     </li>
     <li>Check its version
-    ```sh
-    type 'wkhtmltopdf --version' in terminal
-    ```
+
+        ```sh
+        type 'wkhtmltopdf --version' in terminal
+        ```
     </li>
   </ol>
 </details>
@@ -229,3 +232,4 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [FastAPI-url]: https://fastapi.tiangolo.com/
 [FastAPI]: https://img.shields.io/badge/fastapi-000000?style=for-the-badge&logo=fastapi&logoColor=white
 [wkhtmltopdf]: https://img.shields.io/badge/wkhtmltopdf-000000?style=for-the-badge&logo=wkhtmltopdf&logoColor=white
+[wkhtmltopdf-url]: https://wkhtmltopdf.org/
