@@ -203,8 +203,11 @@ Room for improvement:
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 * [Valentino Chryslie Triadi](https://github.com/ValentinoTriadi)
+![LinkedIn](www.linkedin.com/in/valentino-triadi)
 * [Atqiya Haydar Lukman](https://github.com/AtqiyaHaydar)
+![LinkedIn](www.linkedin.com/in/atqiyahaydar/)
 * [Shabrina Maharani](https://github.com/Maharanish)
+![LinkedIn](www.linkedin.com/in/atqiyahaydar/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
