@@ -73,8 +73,31 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-GoMilk is Image Retrieval System Website with CONTENT-BASED INFORMATION RETRIEVAL system that based on application of vector algebra. This website can search all of the similiar dataset with the image input using a comparison with color or texture.
+Welcome to GoMilk, where the world of images becomes effortlessly accessible through cutting-edge Content-Based Image Retrieval (CBIR) technology and the application of vector algebra. We are not just a platform; we are your go-to solution for finding visually similar images with precision and speed.
+<br/>
+<strong>Our Mission</strong>
 
+At GoMilk, we are on a mission to redefine how you interact with images online. Our primary goal is to provide an intuitive and powerful image retrieval system that seamlessly integrates the principles of CBIR, making the search for visually analogous images a breeze.
+<br/>
+<strong>The Power of CBIR and Vector Algebra</strong>
+
+Imagine a world where finding images is not just about keywords but about the visual essence. GoMilk leverages the robust methodology of CBIR, which allows you to search for images based on their visual content rather than relying solely on textual descriptions. We have incorporated vector algebra to enhance the accuracy and efficiency of our image retrieval process, ensuring you get the most relevant results.
+<br/>
+<strong>Key Features:</strong>
+
+* Precision Matching : Our advanced CBIR algorithm ensures precise image matching by analyzing visual content, leading to accurate search results.
+* Similarity Percentage : GoMilk doesn't just find similar images; it quantifies the similarity, providing you with a percentage match to gauge relevance.
+* User-Friendly Interface : Navigating through our website is a delightful experience. Our user-friendly interface makes image retrieval a simple and enjoyable task.
+* Visual Display : Results are not just numbers; they are beautifully displayed images, allowing you to visually confirm the relevance of your search.
+<br/>
+<strong>Why GoMilk?</strong>
+
+* Efficiency : Save time by finding visually similar images quickly and accurately.
+* Innovation : We are at the forefront of image retrieval technology, continuously evolving to meet your needs.
+* User-Centric Approach : GoMilk is designed with you in mind, ensuring a seamless and enjoyable experience.
+
+Your visual adventure begins here at GoMilk – where every image tells a story, and we're here to help you find it.
+* 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
