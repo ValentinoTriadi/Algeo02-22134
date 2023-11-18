@@ -23,7 +23,7 @@ const page: React.FC = () => {
   const [isProcessed, setIsProcessed] = useState(false);
   const [timeProcess, setTimeProcess] = useState(0.0);
   const [similarity, setSimilarity] = useState<FileList | null>(null);
-  const [requestsSent, setRequestsSent] = useState(false);
+  // const [requestsSent, setRequestsSent] = useState(false);
   const [totalImage, setTotalImage] = useState<Number>(0);
 
   const itemsPerPage = 9; // Jumlah gambar per halaman (diubah menjadi 6)
@@ -112,7 +112,10 @@ const page: React.FC = () => {
 
   // Fungsi mencari
   const searchHandler = async () => {
-    if (fileImage) {
+    if (fileImage || capturedImage) {
+      setTimeProcess(0.0);
+      setUploadedFiles(null);
+      setSimilarity(null);
       console.log("SEARCHING");
       
       const requests = {
@@ -140,8 +143,8 @@ const page: React.FC = () => {
         }
       }
 
+      const file = fileImage || capturedImage;
       const formData = new FormData();
-      const file = fileImage;
 
       formData.append(
         'file', 
@@ -180,41 +183,31 @@ const page: React.FC = () => {
       console.log(b);
       console.log(cekJson);
       console.log("SEARCHED");
-     
-      if (!requestsSent) {
-        const fileList: File[] = [];
-        const similarityList: File[] = [];
-        let fetchOperationDone = false;
-        for (const key of Object.keys(cekJson)) {
-          if (key == "Time"){
-            setTimeProcess(previousTime => previousTime + cekJson[key]);
-          } else {
-            if (!fetchOperationDone) {
-              const url = `http://localhost:8000/static/dataset/${key}`;
-              const response = await fetch(url);
-              const blob = await response.blob();
-              const file = new File([blob], key, { type: "image/jpeg" });
-              const similarityValue = cekJson[key];
-              console.log(similarityValue);
-              fileList.push(file);
-              similarityList.push(similarityValue);
-            }
-          }
+  
+      const fileList: File[] = [];
+      const similarityList: File[] = [];
+      // let fetchOperationDone = false;
+      for (const key of Object.keys(cekJson)) {
+        if (key == "Time"){
+          setTimeProcess(previousTime => previousTime + cekJson[key]);
+        } else {
+          const url = `http://localhost:8000/static/dataset/${key}`;
+          const response = await fetch(url);
+          const blob = await response.blob();
+          const file = new File([blob], key, { type: "image/jpeg" });
+          const similarityValue = cekJson[key];
+          console.log(similarityValue);
+          fileList.push(file);
+          similarityList.push(similarityValue);
         }
-        
-        setTotalImage(fileList.length);
-        fetchOperationDone = true;
+
         console.log(fileList);
         setUploadedFiles(fileList);
         setSimilarity(similarityList);
       }
-      setRequestsSent(true);
+      setTotalImage(fileList.length);
+      
     }
-  }
-
-  const resetRequestsSent = () => {
-    setRequestsSent(false);
-    searchHandler();
   }
 
   const deleteDatasetHandler = () => {
@@ -240,8 +233,9 @@ const page: React.FC = () => {
   }
 
   // Fungsi Camera
-  const webcamRef = useRef(null);
+  const webcamRef = useRef<any>(null);
   const [displayedCamera, setDisplayedCamera] = useState('');
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
@@ -249,8 +243,13 @@ const page: React.FC = () => {
       if (webcamRef.current) {
         const imageSrc = webcamRef.current.getScreenshot();
         setDisplayedCamera(imageSrc);
-        setFileImage(imageSrc); // Mengubah fileImage menjadi imageSrc
-        setCountdown(6)
+
+        if (imageSrc) {
+          const blob = dataURLtoBlob(imageSrc);
+          setCapturedImage(imageSrc);
+          setFileImage(blob); // Assuming you want to set fileImage as well
+          setCountdown(6);
+        }
       }
     }, 5000);
 
@@ -265,6 +264,46 @@ const page: React.FC = () => {
       clearInterval(countdownInterval);
     };
   }, []);
+
+  // Function to convert data URL to Blob
+  function dataURLtoBlob(dataURL: string): Blob | null {
+    try {
+      const [header, base64] = dataURL.split(',');
+  
+      if (!header.startsWith('data:')) {
+        console.error('Invalid data URL format');
+        return null;
+      }
+  
+      const match = header.match(/^data:(.*?);base64/);
+  
+      if (!match) {
+        console.error('Invalid data URL format');
+        return null;
+      }
+  
+      const mime = match[1];
+      const byteCharacters = atob(base64);
+      const byteArrays = [];
+  
+      for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+        const slice = byteCharacters.slice(offset, offset + 512);
+        const byteNumbers = new Array(slice.length);
+  
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+  
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+      }
+  
+      return new Blob(byteArrays, { type: mime });
+    } catch (error) {
+      console.error('Failed to convert data URL to Blob', error);
+      return null;
+    }
+  }
 
   return (
     <section className='w-full h-full p-12 flex flex-col items-center justify-center'>
@@ -316,7 +355,7 @@ const page: React.FC = () => {
                   <Switch onClick={switchHandler} />
                 <p>Texture</p>
               </div>
-              <Button className='w-[200px] rounded-full' onClick={resetRequestsSent}>
+              <Button className='w-[200px] rounded-full' onClick={searchHandler}>
                 Search
               </Button>
             </div>
@@ -351,7 +390,7 @@ const page: React.FC = () => {
                   <Switch onClick={switchHandler} />
                 <p>Texture</p>
               </div>
-              <Button className='w-[200px]' onClick={resetRequestsSent}>
+              <Button className='w-[200px]' onClick={searchHandler}>
                 Search
               </Button>
             </div>
@@ -394,7 +433,7 @@ const page: React.FC = () => {
                   height={225}
                   className='h-[225px] w-[225px] m-4 rounded-xl'
                   />
-                  <p className='relative bottom-0 font-bold text-center'>{similarity[index+currentPage*itemsPerPage]}%</p>      
+                  <p className='relative bottom-0 font-bold text-center'>{similarity[index+(currentPage*itemsPerPage)]}%</p>      
                 </div>
               ))}
             </div>

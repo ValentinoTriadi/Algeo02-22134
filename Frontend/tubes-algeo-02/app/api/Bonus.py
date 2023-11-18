@@ -23,7 +23,7 @@ def imageScraper(url):
             full_url = url + source
         
         data = requests.get(full_url).content 
-        f = open(f'Backend/static/scrape/{count}.jpg','wb') 
+        f = open(f'./static/dataset/{count}.jpg','wb') 
         f.write(data) 
         f.close() 
         
