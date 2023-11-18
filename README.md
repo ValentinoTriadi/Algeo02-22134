@@ -203,11 +203,10 @@ Room for improvement:
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 * [Valentino Chryslie Triadi](https://github.com/ValentinoTriadi)
-![LinkedIn](www.linkedin.com/in/valentino-triadi)
+[![LinkedIn][linkedin-shield-valen]][linkedin-valen]
 * [Atqiya Haydar Lukman](https://github.com/AtqiyaHaydar)
-![LinkedIn](www.linkedin.com/in/atqiyahaydar/)
+[![LinkedIn][linkedin-shield-qiya]][linkedin-qiya]
 * [Shabrina Maharani](https://github.com/Maharanish)
-![LinkedIn](www.linkedin.com/in/atqiyahaydar/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -228,3 +227,7 @@ Room for improvement:
 [FastAPI]: https://img.shields.io/badge/fastapi-000000?style=for-the-badge&logo=fastapi&logoColor=white
 [wkhtmltopdf]: https://img.shields.io/badge/wkhtmltopdf-000000?style=for-the-badge&logo=wkhtmltopdf&logoColor=white
 [wkhtmltopdf-url]: https://wkhtmltopdf.org/
+[linkedin-shield-valen]: https://img.shields.io/badge/Linkedin-Valentino%20Triadi-000000?style=for-the-badge&logo=linkedin&logoColor=white
+[linkedin-valen]: https://linkedin.com/in/valentino-triadi
+[linkedin-shield-qiya]: https://img.shields.io/badge/Linkedin-Atqiya%20Haydar-000000?style=for-the-badge&logo=linkedin&logoColor=white
+[linkedin-qiya]: https://linkedin.com/in/atqiyahaydar
