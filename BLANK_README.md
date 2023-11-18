@@ -49,6 +49,7 @@
       <a href="#about-the-project">About The Project</a>
       <ul>
         <li><a href="#built-with">Built With</a></li>
+        <li><a href="#features">Built With</a></li>
       </ul>
     </li>
     <li>
@@ -58,6 +59,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
+    <li><a href="#usage">Usage</a></li>
     <li><a href="#contributor">Contributor</a></li>
   </ol>
 </details>
@@ -83,6 +85,17 @@ GoMilk is Image Retrieval System Website with CONTENT-BASED INFORMATION RETRIEVA
 * [![FastAPI][FastAPI]][FastAPI-url]
 * [![wkhtmltopdf][wkhtmltopdf]][wkhtmltopdf-url]
 
+<br/>
+
+### Features
+
+* Image Retrieval by color similiarity
+* Image Retrieval by texture similiarity
+* Image Scraping
+* Camera
+* Export PDF Result
+* Cache for better performance
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -97,37 +110,15 @@ GoMilk is Image Retrieval System Website with CONTENT-BASED INFORMATION RETRIEVA
   ```
 * Python Dependencies
   ```sh
-  cd src
+  cd src/Frontend/tubes-algeo-02/app/api
   ```
   ```sh
   pip install -r requirement.txt
   ```
+* wkhtmltopdf
+  <a href= #WKHTMLTOPDF-INSTALLATION>How to Install WKHTMLTOPDF</a>
 
 ### Installation
-<details>
-  <summary>WKHTMLTOPDF INSTALLATION</summary>
-  <ol>
-    <li>Download wkhtmltopdf
-
-        ```sh
-        click https://wkhtmltopdf.org/downloads.html
-        ```
-    </li>
-    <li>Set Up Environment
-
-        ```sh
-        put '{Personal Path}\wkhtmltopdf\bin' in system environment path 
-        ```
-    </li>
-    <li>Check its version
-
-        ```sh
-        type 'wkhtmltopdf --version' in terminal
-        ```
-    </li>
-  </ol>
-</details>
-
 1. Clone the repo
    ```sh
    git clone git@github.com:ValentinoTriadi/Algeo02-22134.git
@@ -139,7 +130,35 @@ GoMilk is Image Retrieval System Website with CONTENT-BASED INFORMATION RETRIEVA
    ```sh
    npm install
    ```
+4. Install Python dependencies
+   ```sh
+   cd Frontend/tubes-algeo-02/app/api
+   ```
+   ```sh
+   pip install -r requirement.txt
+   ```
+4. Install WKHTMLTOPDF
+  <a href="#WKHTMLTOPDF-INSTALLATION">How to Install WKHTMLTOPDF</a>
 
+<br/>
+<br/>
+
+#### WKHTMLTOPDF INSTALLATION
+  1. Download wkhtmltopdf
+    ```sh
+    click 'https://wkhtmltopdf.org/downloads.html'
+    ```
+  2. Set Up Environment
+    ```sh
+    put '{Personal Path}\wkhtmltopdf\bin' in system environment path 
+    ```
+  3. Check its version
+    ```sh
+    type 'wkhtmltopdf --version' in terminal
+    ```
+<br/>
+<br/>
+ 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -147,9 +166,21 @@ GoMilk is Image Retrieval System Website with CONTENT-BASED INFORMATION RETRIEVA
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
+1. Run Next
+  ```sh
+  cd 'src/Frontend/tubes-algeo-02'
+  ```
+  ```sh
+  type 'npm run dev'
+  ```
+1. Get into API's directory
+  ```sh
+  cd 'Frontend/tubes-algeo-02/app/api'
+  ```
+2. Run FastAPI
+  ```sh
+  type 'uvicorn main:app --reload'
+  ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
