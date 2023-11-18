@@ -77,10 +77,12 @@ Welcome to GoMilk, where the world of images becomes effortlessly accessible thr
 
 <br/>
 <strong>Our Mission</strong>
+
 At GoMilk, we are on a mission to redefine how you interact with images online. Our primary goal is to provide an intuitive and powerful image retrieval system that seamlessly integrates the principles of CBIR, making the search for visually analogous images a breeze.
 
 <br/>
 <strong>The Power of CBIR and Vector Algebra</strong>
+
 Imagine a world where finding images is not just about keywords but about the visual essence. GoMilk leverages the robust methodology of CBIR, which allows you to search for images based on their visual content rather than relying solely on textual descriptions. We have incorporated vector algebra to enhance the accuracy and efficiency of our image retrieval process, ensuring you get the most relevant results.
 
 <br/>
