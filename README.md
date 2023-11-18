@@ -189,12 +189,16 @@ GoMilk is Image Retrieval System Website with CONTENT-BASED INFORMATION RETRIEVA
 <!-- PROJECT STATUS -->
 ## Project Status
 Project status: _complete_ 
+<br/>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROOM FOR IMPROVEMENT -->
 ## Room for Improvement
 Room for improvement:
 - Improve speed of process using miltiprocessing
 - Improve Frontend Responsiveness 
+<br/>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
