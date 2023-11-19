@@ -202,17 +202,17 @@ Your visual adventure begins here at GoMilk – where every image tells a story,
    ```
 2. Create venv
    ```sh
-   type 'virtualenv venv'
+   virtualenv venv
    ```
 3. activate venv
    ```sh
-   type 'venv/Scripts/activate'
+   venv/Scripts/activate
    ```
 
 #### WKHTMLTOPDF INSTALLATION
 1. Download wkhtmltopdf
   ```sh
-  click https://wkhtmltopdf.org/downloads.html
+  https://wkhtmltopdf.org/downloads.html
   ```
 2. Set Up Environment
   ```sh
@@ -220,7 +220,7 @@ Your visual adventure begins here at GoMilk – where every image tells a story,
   ```
 3. Check its version
   ```sh
-  type 'wkhtmltopdf --version' in terminal
+  wkhtmltopdf --version
   ```
 <br/>
 <br/>
@@ -237,14 +237,14 @@ Your visual adventure begins here at GoMilk – where every image tells a story,
   cd src/tubes-algeo-02
   ```
   ```sh
-  type 'npm run dev'
+  npm run dev
   ```
 2. Run FastAPI
   ```sh
   cd src/tubes-algeo-02/app/api
   ```
   ```sh
-  type 'uvicorn main:app --reload'
+  uvicorn main:app --reload
   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
