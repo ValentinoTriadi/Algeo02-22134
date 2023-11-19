@@ -1,0 +1,19 @@
+export default pageconst searchHandler = async () => {
+  if (displayed && uploadedFiles) {
+    const formData = new FormData();
+    formData.append('displayed', displayed);
+    for (let i = 0; i < uploadedFiles.length; i++) {
+      formData.append('files', uploadedFiles[i]);
+    }
+    try {
+      const response = await fetch('/api/search', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      setHasilUrls(data.urls);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+};
