@@ -71,9 +71,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Home Page][home-screenshot]]
-[![About][about-screenshot]]
-[![Tools][tools-screenshot]]
+[![Home Page][home-screenshot]](https://github.com/ValentinoTriadi/Algeo02-22134)
+[![About][about-screenshot]](https://github.com/ValentinoTriadi/Algeo02-22134)
+[![Tools][tools-screenshot]](https://github.com/ValentinoTriadi/Algeo02-22134)
 
 Welcome to GoMilk, where the world of images becomes effortlessly accessible through cutting-edge Content-Based Image Retrieval (CBIR) technology and the application of vector algebra. We are not just a platform; we are your go-to solution for finding visually similar images with precision and speed.
 
