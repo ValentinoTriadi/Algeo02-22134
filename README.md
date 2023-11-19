@@ -185,6 +185,7 @@ Your visual adventure begins here at GoMilk – where every image tells a story,
    cd src/tubes-algeo-02/app/api
    ```
    <a href="#Virtual-Environment">Create virtual env (optional)</a>
+   
    ```sh
    pip install -r requirement.txt
    ```
