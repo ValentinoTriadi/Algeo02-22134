@@ -105,6 +105,7 @@ const page: React.FC = () => {
   // Fungsi mencari
   const searchHandler = async () => {
     if (fileImage || capturedImage) {
+      setCurrentPage(0);
       setTotalImage(0);
       setTimeProcess(0.0);
       setUploadedFiles(null);
@@ -241,6 +242,7 @@ const page: React.FC = () => {
       if (webcamRef.current) {
         const imageSrc = webcamRef.current.getScreenshot();
         setDisplayedCamera(imageSrc);
+        console.log(imageSrc);
 
         if (imageSrc) {
           const blob = dataURLtoBlob(imageSrc);
@@ -325,8 +327,27 @@ const page: React.FC = () => {
       <div className='mt-[75px]' />
 
       <div className='flex gap-x-20 text-xl font-bold mb-8'>
-        <p onClick={() => setTools('Lens')} className='cursor-pointer hover:scale-125 transition-all'>Lens</p>
-        <p onClick={() => setTools('Camera')} className='cursor-pointer hover:scale-125 transition-all'>Camera</p>
+        <p onClick={() => {
+          setTools('Lens');
+          setDisplayedCamera(''); 
+          setCapturedImage(null);
+          setCurrentPage(0);
+          setTotalImage(0);
+          setTimeProcess(0.0);
+          setUploadedFiles(null);
+          setSimilarity(null);}}
+          className='cursor-pointer hover:scale-125 transition-all'>Lens</p>
+        <p onClick={() => {
+          setTools('Camera');
+          setDisplayed(ImagePlaceholder);
+          setDisplayedName('');
+          setCurrentPage(0);
+          setTotalImage(0);
+          setTimeProcess(0.0);
+          setUploadedFiles(null);
+          setSimilarity(null);
+          setCountdown(5);}} 
+          className='cursor-pointer hover:scale-125 transition-all'>Camera</p>
       </div>
 
       {/* CAMERA INPUT */}
