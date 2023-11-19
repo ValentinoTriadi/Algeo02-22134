@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IMAGE SEARCH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style type="text/css">
+    .container {
+      max-width: 800px;
+      padding-top: 100px;
+    }
+    p {font-size: medium; text-align: left; display:flex; flex-direction: column}
+    h4 {text-align: center;}
+    h3 {margin-left:20px;color: rgb(19, 17, 17); font-family: monospace;}
+    .ContainerTitle {
+        margin: 70px;
+    }
+    .containerImage {
+        margin: 20px;
+        display: flex;
+        gap: 30px;
+    }
+  </style>
+</head>
+<body>
+    <div class="ContainerTitle">
+        <h1>IMAGE SEARCH</h1>
+        <h2>By: GoMilk</h2>
+        <h3>- Sabrina Maharani</h3>
+        <h3>- Atqiya Haydar Lukman</h3>
+        <h3>- Valentino Chryslie Triadi</h3>
+        <img src="{{path}}/static/search.jpg" alt="" style="width: 300px;">
+        <h2>Execution Time: {{time}} s</h2>
+    </div>
+
+    {% for item in items.keys() %}
+    <div class="containerImage">
+        <img src="{{path}}/static/dataset/{{item}}" alt="" style="width: 200px;">
+        <h2>{{items[item]}}%</h2>
+        <!-- <img src="./static/dataset/0.jpg" alt="" style="width: 250px;">
+        <h3>{{items[item]}}</h3> -->
+    </div>
+    {% endfor %}
+</body>
+</html>
