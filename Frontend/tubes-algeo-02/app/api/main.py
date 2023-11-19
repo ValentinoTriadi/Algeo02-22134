@@ -148,8 +148,9 @@ async def searchTekstur(file: bytes = File(...), namafile: str = Form(...)):
     return {"Status":"Success"}
 
 
-@app.get("/image-scarpe/")
+@app.post("/image-scrape/")
 def imageScrape(url: str = Form(...)):
+    print(url)
     deleteDataSet()
     count = imageScraper(url)
     if (count != 0):

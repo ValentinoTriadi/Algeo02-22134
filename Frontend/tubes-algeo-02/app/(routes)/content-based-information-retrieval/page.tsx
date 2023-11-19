@@ -18,12 +18,10 @@ const page: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<FileList | null>(null);
   const [currentPage, setCurrentPage] = useState(0); // Menyimpan halaman saat ini
   const [tools, setTools] = useState('Lens')
-  const [formData, setFormData] = useState(new FormData());
   const [fileImage, setFileImage] = useState<File | null>(null);
   const [isProcessed, setIsProcessed] = useState(false);
   const [timeProcess, setTimeProcess] = useState(0.0);
   const [similarity, setSimilarity] = useState<FileList | null>(null);
-  // const [requestsSent, setRequestsSent] = useState(false);
   const [totalImage, setTotalImage] = useState<Number>(0);
 
   const itemsPerPage = 9; // Jumlah gambar per halaman (diubah menjadi 6)
@@ -50,11 +48,6 @@ const page: React.FC = () => {
     setTextureEnabled((prevTextureEnabled) => !prevTextureEnabled);
     setIsProcessed(false);
 
-    // if (!textureEnabled) {
-    //   console.log("Switched to Color")
-    // } else {
-    //   console.log("Switched to Texture")
-    // }
   }
 
   // Mengunggah gambar
@@ -90,11 +83,11 @@ const page: React.FC = () => {
     }
 
     if (e.target.files) {
-      const formData = new FormData();
       const files  = e.target.files;
-
+      
       console.log(files);
-
+      const formData = new FormData();
+      
       for (let i = 0; i < files.length; i++) {
         formData.append('files', files[i]);
       }
@@ -195,13 +188,11 @@ const page: React.FC = () => {
           const response = await fetch(url);
           const blob = await response.blob();
           const file = new File([blob], key, { type: "image/jpeg" });
+          fileList.push(URL.createObjectURL(file));
           const similarityValue = cekJson[key];
-          console.log(similarityValue);
-          fileList.push(file);
           similarityList.push(similarityValue);
         }
 
-        console.log(fileList);
         setUploadedFiles(fileList);
         setSimilarity(similarityList);
       }
@@ -211,6 +202,10 @@ const page: React.FC = () => {
   }
 
   const deleteDatasetHandler = () => {
+    setUploadedFiles(null);
+    setSimilarity(null);
+    setIsProcessed(false);
+    setTimeProcess(0.0);
     fetch("http://localhost:8000/delete-dataset/");
   }
 
@@ -305,6 +300,22 @@ const page: React.FC = () => {
     }
   }
 
+  // Fungsi scrapping
+  const [isScraping, setIsScraping] = useState<Boolean>(false);
+  const [scrapingInput, setScrapingInput] = useState<String>('');
+
+  const imageScrapingHandler = () => {
+    setIsScraping((prev) => !prev);
+    console.log("Scrap Button Clicked")
+  }
+
+  const scrapingHandler = async () => {
+    setIsProcessed(false);
+    const formData = new FormData();
+    formData.append('scrapingInput', scrapingInput);
+    axios.post('http://localhost:8000/image-scrape', formData);
+  }
+
   return (
     <section className='w-full h-full p-12 flex flex-col items-center justify-center'>
       <Image src={WebBG} alt="Background Website" className="h-full w-full fixed top-0 left-0 z-[-100] text-[#2F3238]"/>
@@ -313,7 +324,6 @@ const page: React.FC = () => {
       <div className='flex gap-x-20 text-xl font-bold mb-8'>
         <p onClick={() => setTools('Lens')} className='cursor-pointer hover:scale-125 transition-all'>Lens</p>
         <p onClick={() => setTools('Camera')} className='cursor-pointer hover:scale-125 transition-all'>Camera</p>
-        <p onClick={() => setTools('Scrapper')} className='cursor-pointer hover:scale-125 transition-all'>Scrapper</p>
       </div>
 
       {/* CAMERA INPUT */}
@@ -400,9 +410,35 @@ const page: React.FC = () => {
       }
       
       {/* RESULT IMAGE */}
-      <Button className='mt-12 px-12 py-6' onClick={uploadDatasetHandler}>
-        Upload Dataset
-      </Button>
+      {!isScraping && (
+        <Button 
+          className='mt-12 px-12 py-6' 
+          onClick={uploadDatasetHandler}
+        >
+          Upload Dataset
+        </Button>
+      )}
+      <p 
+        className='mt-8 px-6 py-3 border-black border-2 rounded-full hover:bg-black hover:text-white hover:shadow-xl transition-all cursor-pointer'
+        onClick={imageScrapingHandler}
+      >
+        {!isScraping && 'Use images from website as dataset'}
+        {isScraping && 'Use your folder'}
+      </p>
+      {isScraping && (
+        <div className='flex gap-x-4 mt-4 justify-center items-center'>
+          <Input
+            type='text'
+            className='bg-transparent border-black border-2 rounded-full px-6 py-3 w-[500px] shadow-xl'
+            placeholder='Enter your link..'
+            value={scrapingInput}
+            onChange={(e) => setScrapingInput(e.target.value)}
+          />
+          <Button onClick={scrapingHandler} className='rounded-full'>
+            Set Dataset
+          </Button>
+        </div>
+      )}
       <div>
         <input
           className='hidden'
@@ -427,7 +463,7 @@ const page: React.FC = () => {
               {displayedFiles.map((file, index) => (
                 <div key={index}>
                   <Image
-                  src={URL.createObjectURL(file)}
+                  src={file}
                   alt={`Uploaded Image ${index}`}
                   width={225}
                   height={225}
